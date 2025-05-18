@@ -2,18 +2,19 @@
 "use client";
 
 import React, { useState } from 'react';
-// import Link from 'next/link'; // Link is not used directly if Achievements card is removed
+import Link from 'next/link';
 import { AppHeader } from '@/components/layout/app-header';
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
-import { AiInsightsTool } from '@/components/hydration/ai-insights-tool';
-// SmartReminderInfo is removed from dashboard view
+// AiInsightsTool is removed from direct dashboard view
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-// Removed Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle as they were for the removed Achievements link card
-// Removed Trophy, ArrowRight imports
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bot, ArrowRight } from 'lucide-react';
+
 
 export default function HydrateWisePage() {
   const { 
@@ -22,7 +23,7 @@ export default function HydrateWisePage() {
     logWater, 
     setDailyGoal, 
     isInitialized,
-    incrementAiInsightsUsedCount,
+    // incrementAiInsightsUsedCount, // No longer directly used on this page
   } = useHydrationData(2500);
   
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -42,15 +43,30 @@ export default function HydrateWisePage() {
           {isInitialized ? (
             <>
               <LogWaterForm onLogWater={logWater} />
-              <AiInsightsTool onInsightGenerated={incrementAiInsightsUsedCount} />
-              {/* SmartReminderInfo component instance removed from here */}
+              <Card className="shadow-lg w-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Bot className="h-6 w-6 text-primary" /> AI Hydration Insights</CardTitle>
+                  <CardDescription>Get personalized hydration advice tailored to your needs.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Unlock insights based on your activity, weather, sleep, and weight to optimize your hydration strategy.
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Button asChild className="w-full sm:w-auto">
+                    <Link href="/insights">
+                      Get AI Insights <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
-              <Skeleton className="h-72 w-full rounded-lg" /> {/* AiInsightsTool */}
-              {/* Skeleton for SmartReminderInfo has been removed */}
+              <Skeleton className="h-40 w-full rounded-lg" /> {/* AI Insights Link Card */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>

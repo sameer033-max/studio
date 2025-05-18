@@ -20,6 +20,9 @@ export function AppHeader() {
           <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
             Dashboard
           </Link>
+          <Link href="/insights" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            Insights
+          </Link>
           <Link href="/achievements" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
             Achievements
           </Link>
