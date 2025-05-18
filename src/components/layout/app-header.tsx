@@ -11,9 +11,9 @@ export function AppHeader() {
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
     return cn(
-      "text-base font-medium transition-all duration-150 ease-in-out px-4 py-2 rounded-md", // Increased font size and padding
+      "text-base font-medium transition-all duration-150 ease-in-out px-4 py-2 rounded-md",
       isActive 
-        ? "text-primary font-semibold bg-primary/10" // Active link style
+        ? "text-primary font-semibold bg-primary/10 border-b-2 border-primary" // Active link style with bottom border
         : "text-muted-foreground hover:text-primary hover:bg-accent/30" // Inactive link hover style
     );
   };
