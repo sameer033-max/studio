@@ -7,13 +7,10 @@ import { AppHeader } from '@/components/layout/app-header';
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
-// AiInsightsTool is removed from direct dashboard view
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, ArrowRight } from 'lucide-react';
+// Removed Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Bot, ArrowRight as they are no longer used here if the insights card is removed.
 
 
 export default function HydrateWisePage() {
@@ -23,7 +20,6 @@ export default function HydrateWisePage() {
     logWater, 
     setDailyGoal, 
     isInitialized,
-    // incrementAiInsightsUsedCount, // No longer directly used on this page
   } = useHydrationData(2500);
   
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -43,30 +39,13 @@ export default function HydrateWisePage() {
           {isInitialized ? (
             <>
               <LogWaterForm onLogWater={logWater} />
-              <Card className="shadow-lg w-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Bot className="h-6 w-6 text-primary" /> AI Hydration Insights</CardTitle>
-                  <CardDescription>Get personalized hydration advice tailored to your needs.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Unlock insights based on your activity, weather, sleep, and weight to optimize your hydration strategy.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild className="w-full sm:w-auto">
-                    <Link href="/insights">
-                      Get AI Insights <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
+              {/* AI Insights Link Card removed from here */}
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
-              <Skeleton className="h-40 w-full rounded-lg" /> {/* AI Insights Link Card */}
+              {/* Skeleton for AI Insights Link Card removed */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
