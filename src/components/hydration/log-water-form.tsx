@@ -1,21 +1,25 @@
 
 "use client";
 
-import React, { useState, useMemo, useCallback } from 'react'; // Added useCallback
+import React, { useState, useMemo, useCallback } from 'react';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useFormContext } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GlassWater, PlusCircle, MinusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 const logWaterSchema = z.object({
-  customAmount: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-    message: "Please enter a valid amount.",
+  customAmount: z.string().refine(val => {
+    if (val === "") return true; // Allow empty string, onSubmit will handle it
+    const num = parseFloat(val);
+    return !isNaN(num) && num > 0;
+  }, {
+    message: "Please enter a positive number.",
   }).optional(),
   presetAmount: z.string().optional(),
 });
@@ -57,10 +61,13 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
 
   function onSubmit(data: LogWaterFormValues) {
     let amount = 0;
-    if (isCustom && data.customAmount) {
-      amount = parseFloat(data.customAmount);
-    } else if (!isCustom && data.presetAmount) {
-      amount = parseFloat(data.presetAmount);
+    const customValFloat = data.customAmount ? parseFloat(data.customAmount) : 0;
+    const presetValFloat = data.presetAmount ? parseFloat(data.presetAmount) : 0;
+
+    if (isCustom && data.customAmount && customValFloat > 0) {
+      amount = customValFloat;
+    } else if (!isCustom && data.presetAmount && presetValFloat > 0) {
+      amount = presetValFloat;
     }
 
     if (amount > 0) {
@@ -69,12 +76,12 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
         title: "Water Logged!",
         description: `${formatVolume(amount)} added to your daily intake.`,
       });
-      form.reset();
+      form.reset({ customAmount: "", presetAmount: "" });
       setIsCustom(false); // Reset to preset view
     } else {
        toast({
         title: "Error",
-        description: "Please select a preset or enter a custom amount.",
+        description: "Please select a preset or enter a valid custom amount.",
         variant: "destructive",
       });
     }
@@ -92,11 +99,13 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
     <SelectValue placeholder="Select a preset amount" />
   ), []);
 
-  // Memoize the onValueChange handler
   const handlePresetAmountChange = useCallback((value: string, fieldOnChange: (value: string) => void) => {
-    fieldOnChange(value);
-    setIsCustom(false);
-  }, [setIsCustom]); // setIsCustom is stable
+    fieldOnChange(value); // Update RHF for presetAmount
+    form.setValue('customAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false }); // Clear customAmount
+    if (isCustom) { // If current mode is custom, switch to preset
+      setIsCustom(false);
+    }
+  }, [form, isCustom, setIsCustom]);
 
   return (
     <Card className="shadow-lg w-full">
@@ -152,8 +161,13 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                     <FormControl>
                       <Input type="number" placeholder="e.g., 300" {...field} 
                         onChange={e => {
-                          field.onChange(e.target.value);
-                          form.setValue('presetAmount', ''); // Clear preset if custom is used
+                          const currentValue = e.target.value;
+                          field.onChange(currentValue); // Update RHF for customAmount
+                          // If user types anything in customAmount, assume they intend to use custom mode.
+                          form.setValue('presetAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false }); // Clear presetAmount
+                          if (!isCustom) { // If current mode is preset, switch to custom
+                            setIsCustom(true);
+                          }
                         }}
                       />
                     </FormControl>
@@ -162,7 +176,16 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                 )}
               />
             )}
-            <Button type="button" variant="link" onClick={() => setIsCustom(!isCustom)} className="p-0 h-auto">
+            <Button type="button" variant="link" onClick={() => {
+                const newIsCustom = !isCustom;
+                setIsCustom(newIsCustom);
+                // When toggling, clear the field that will be hidden
+                if (newIsCustom) { // Switched TO custom
+                    form.setValue('presetAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+                } else { // Switched TO preset
+                    form.setValue('customAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+                }
+            }} className="p-0 h-auto">
               {isCustom ? "Use Presets Instead" : "Enter Custom Amount"}
             </Button>
           </CardContent>
@@ -175,14 +198,17 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                 const presetVal = form.getValues().presetAmount;
                 let amountToRemove = 0;
 
-                if (isCustom && customVal) {
-                    amountToRemove = parseFloat(customVal);
-                } else if (!isCustom && presetVal) {
-                    amountToRemove = parseFloat(presetVal);
+                const customValFloat = customVal ? parseFloat(customVal) : 0;
+                const presetValFloat = presetVal ? parseFloat(presetVal) : 0;
+
+                if (isCustom && customVal && customValFloat > 0) {
+                    amountToRemove = customValFloat;
+                } else if (!isCustom && presetVal && presetValFloat > 0) {
+                    amountToRemove = presetValFloat;
                 }
                 
                 if (amountToRemove > 0) {
-                    onLogWater(-amountToRemove); // Pass negative value to subtract
+                    onLogWater(-amountToRemove); 
                     toast({
                         title: "Water Removed",
                         description: `${formatVolume(amountToRemove)} removed from your intake.`,
