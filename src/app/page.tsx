@@ -12,9 +12,9 @@ import { SmartReminderInfo } from '@/components/hydration/smart-reminder-info';
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, ArrowRight } from 'lucide-react';
+// Removed Button import as it's not directly used here anymore for the achievements card button
+// Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle are used by other components implicitly or are not needed for direct rendering of the removed card
+// Removed Trophy, ArrowRight imports
 
 export default function HydrateWisePage() {
   const { 
@@ -44,30 +44,7 @@ export default function HydrateWisePage() {
             <>
               <LogWaterForm onLogWater={logWater} />
               <AiInsightsTool onInsightGenerated={incrementAiInsightsUsedCount} />
-              <Card className="shadow-lg w-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-6 w-6 text-primary" />
-                    Achievements
-                  </CardTitle>
-                  <CardDescription>
-                    Track your hydration milestones and unlock new badges.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    See how far you've come and what challenges await!
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild className="w-full sm:w-auto">
-                    <Link href="/achievements">
-                      View Your Achievements
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
+              {/* Achievements Link Card has been removed from here */}
               <SmartReminderInfo />
             </>
           ) : (
@@ -75,7 +52,7 @@ export default function HydrateWisePage() {
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
               <Skeleton className="h-72 w-full rounded-lg" /> {/* AiInsightsTool */}
-              <Skeleton className="h-40 w-full rounded-lg" /> {/* Achievements Link Card */}
+              {/* Skeleton for Achievements Link Card has been removed */}
               <Skeleton className="h-32 w-full rounded-lg" /> {/* SmartReminderInfo */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
