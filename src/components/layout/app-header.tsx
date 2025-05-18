@@ -19,7 +19,7 @@ export function AppHeader() {
   };
 
   return (
-    <header className="py-4 px-2 sm:px-4 shadow-md bg-card sticky top-0 z-50">
+    <header className="py-4 px-2 sm:px-4 border-b shadow-sm bg-card sticky top-0 z-50">
       <div className="flex items-center justify-center"> {/* This centers the nav block */}
         <nav className="flex items-center gap-6 sm:gap-8"> {/* Increased gap */}
           <Link href="/" className={getLinkClasses('/')}>
