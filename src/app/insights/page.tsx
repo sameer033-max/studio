@@ -38,9 +38,7 @@ export default function InsightsPage() {
             <div className="space-y-6">
               <Skeleton className="h-9 w-44 rounded-md" /> {/* Skeleton for back button */}
               <Skeleton className="h-72 w-full rounded-lg" /> {/* Skeleton for AiInsightsTool */}
-               <div className="text-center py-10 text-muted-foreground">
-                Loading AI Insights tool...
-              </div>
+              {/* Removed explicit loading text for a cleaner skeleton display */}
             </div>
           )}
         </main>
@@ -49,3 +47,4 @@ export default function InsightsPage() {
     </div>
   );
 }
+

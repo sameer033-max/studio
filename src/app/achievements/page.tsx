@@ -48,9 +48,7 @@ export default function AchievementsPage() {
               <Skeleton className="h-9 w-44 rounded-md" /> 
               {/* Skeleton for the achievements card */}
               <Skeleton className="h-[600px] w-full rounded-lg" /> 
-               <div className="text-center py-10 text-muted-foreground">
-                Loading achievements...
-              </div>
+              {/* Removed explicit loading text for a cleaner skeleton display */}
             </div>
           )}
         </main>
@@ -59,3 +57,4 @@ export default function AchievementsPage() {
     </div>
   );
 }
+
