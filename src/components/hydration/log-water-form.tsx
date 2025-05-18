@@ -118,7 +118,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                     <Select onValueChange={(value) => {
                       field.onChange(value);
                       setIsCustom(false);
-                    }} defaultValue={field.value}>
+                    }} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           {presetAmountSelectValue}

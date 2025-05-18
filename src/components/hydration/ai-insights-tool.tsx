@@ -95,7 +95,7 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Activity Level</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           {activityLevelSelectValue}
