@@ -2,18 +2,17 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
+// import Link from 'next/link'; // Link is not used directly if Achievements card is removed
 import { AppHeader } from '@/components/layout/app-header';
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
 import { AiInsightsTool } from '@/components/hydration/ai-insights-tool';
-import { SmartReminderInfo } from '@/components/hydration/smart-reminder-info';
+// SmartReminderInfo is removed from dashboard view
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-// Removed Button import as it's not directly used here anymore for the achievements card button
-// Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle are used by other components implicitly or are not needed for direct rendering of the removed card
+// Removed Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle as they were for the removed Achievements link card
 // Removed Trophy, ArrowRight imports
 
 export default function HydrateWisePage() {
@@ -44,16 +43,14 @@ export default function HydrateWisePage() {
             <>
               <LogWaterForm onLogWater={logWater} />
               <AiInsightsTool onInsightGenerated={incrementAiInsightsUsedCount} />
-              {/* Achievements Link Card has been removed from here */}
-              <SmartReminderInfo />
+              {/* SmartReminderInfo component instance removed from here */}
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
               <Skeleton className="h-72 w-full rounded-lg" /> {/* AiInsightsTool */}
-              {/* Skeleton for Achievements Link Card has been removed */}
-              <Skeleton className="h-32 w-full rounded-lg" /> {/* SmartReminderInfo */}
+              {/* Skeleton for SmartReminderInfo has been removed */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
