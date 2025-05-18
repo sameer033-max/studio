@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React from 'react'; // Ensured React is imported for React.memo
 
 interface HydrationProgressBarProps {
   currentIntake: number;
@@ -17,7 +17,7 @@ const formatVolume = (ml: number): string => {
   return `${ml}ml`;
 };
 
-export function HydrationProgressBar({ currentIntake, dailyGoal }: HydrationProgressBarProps) {
+const HydrationProgressBarComponent = ({ currentIntake, dailyGoal }: HydrationProgressBarProps) => {
   const percentage = dailyGoal > 0 ? Math.min((currentIntake / dailyGoal) * 100, 100) : 0;
 
   return (
@@ -43,4 +43,6 @@ export function HydrationProgressBar({ currentIntake, dailyGoal }: HydrationProg
       </p>
     </div>
   );
-}
+};
+
+export const HydrationProgressBar = React.memo(HydrationProgressBarComponent);

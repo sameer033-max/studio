@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React from 'react'; // Ensured React is imported for React.memo
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HydrationProgressBar } from "./hydration-progress-bar";
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ const formatVolume = (ml: number): string => {
   return `${ml}ml`;
 };
 
-export function HydrationTracker({ currentIntake, dailyGoal, onOpenGoalModal, isInitialized }: HydrationTrackerProps) {
+const HydrationTrackerComponent = ({ currentIntake, dailyGoal, onOpenGoalModal, isInitialized }: HydrationTrackerProps) => {
   if (!isInitialized) {
     return (
       <Card className="shadow-lg">
@@ -52,4 +52,6 @@ export function HydrationTracker({ currentIntake, dailyGoal, onOpenGoalModal, is
       </CardContent>
     </Card>
   );
-}
+};
+
+export const HydrationTracker = React.memo(HydrationTrackerComponent);

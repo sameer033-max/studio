@@ -4,6 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { AppHeader } from '@/components/layout/app-header';
+import { AppFooter } from '@/components/layout/app-footer'; // Added AppFooter
 import { AiInsightsTool } from '@/components/hydration/ai-insights-tool';
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { Button } from '@/components/ui/button';
@@ -44,9 +45,7 @@ export default function InsightsPage() {
           )}
         </main>
       </ScrollArea>
-      <footer className="py-4 text-center text-xs text-muted-foreground border-t">
-        HydrateWise &copy; {new Date().getFullYear()} - Stay Refreshed!
-      </footer>
+      <AppFooter /> {/* Replaced inline footer */}
     </div>
   );
 }

@@ -4,13 +4,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { AppHeader } from '@/components/layout/app-header';
+import { AppFooter } from '@/components/layout/app-footer'; // Added AppFooter
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-// Removed Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Bot, ArrowRight as they are no longer used here if the insights card is removed.
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bot, ArrowRight, Trophy } from 'lucide-react';
 
 
 export default function HydrateWisePage() {
@@ -39,13 +42,13 @@ export default function HydrateWisePage() {
           {isInitialized ? (
             <>
               <LogWaterForm onLogWater={logWater} />
-              {/* AI Insights Link Card removed from here */}
+              {/* AI Insights and Achievements Link Cards removed as per previous requests */}
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
-              {/* Skeleton for AI Insights Link Card removed */}
+              {/* Skeletons for AI Insights and Achievements Link Cards removed */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
@@ -63,9 +66,7 @@ export default function HydrateWisePage() {
           setIsGoalModalOpen(false);
         }}
       />
-      <footer className="py-4 text-center text-xs text-muted-foreground border-t">
-        HydrateWise &copy; {new Date().getFullYear()} - Stay Refreshed!
-      </footer>
+      <AppFooter /> {/* Replaced inline footer */}
     </div>
   );
 }
