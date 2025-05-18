@@ -3,24 +3,18 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BellRing, BellOff } from "lucide-react";
+import { BellRing } from "lucide-react"; // Removed BellOff
 import { useToast } from "@/hooks/use-toast";
 
 const REMINDER_INTERVAL = 3600000; // 1 hour in milliseconds
-const LOCAL_STORAGE_REMINDERS_ACTIVE_KEY = 'hydratewise_inAppRemindersActive';
 
 export function SmartReminderInfo() {
-  const [inAppRemindersActive, setInAppRemindersActive] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const { toast } = useToast();
 
-  // Load initial reminder state from localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedRemindersActive = localStorage.getItem(LOCAL_STORAGE_REMINDERS_ACTIVE_KEY);
-      setInAppRemindersActive(storedRemindersActive === 'true');
-    }
+    // This effect is just to set isInitialized to true after the component mounts
+    // to ensure any initial client-side checks are ready.
     setIsInitialized(true);
   }, []);
 
@@ -37,9 +31,10 @@ export function SmartReminderInfo() {
     };
 
     const scheduleReminder = () => {
-      if (inAppRemindersActive && typeof document !== 'undefined') {
+      // Reminders are always active now
+      if (typeof document !== 'undefined') {
         timerId = setTimeout(() => {
-          if (document.visibilityState === 'visible') { // Only show if tab is active
+          if (document.visibilityState === 'visible') { // Only show if tab is active/app is visible
             showReminderToast();
           }
           scheduleReminder(); // Schedule the next one
@@ -47,7 +42,7 @@ export function SmartReminderInfo() {
       }
     };
 
-    if (isInitialized && inAppRemindersActive) {
+    if (isInitialized) {
       scheduleReminder();
     }
 
@@ -56,21 +51,8 @@ export function SmartReminderInfo() {
         clearTimeout(timerId);
       }
     };
-  }, [inAppRemindersActive, toast, isInitialized]);
+  }, [toast, isInitialized]);
 
-  const handleToggleReminders = () => {
-    const newActiveState = !inAppRemindersActive;
-    setInAppRemindersActive(newActiveState);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(LOCAL_STORAGE_REMINDERS_ACTIVE_KEY, newActiveState.toString());
-    }
-    toast({
-      title: newActiveState ? "In-App Reminders Enabled" : "In-App Reminders Disabled",
-      description: newActiveState 
-        ? "You'll receive hourly in-app reminders while this page is open and active."
-        : "In-app hydration reminders have been turned off.",
-    });
-  };
 
   if (!isInitialized) {
     return (
@@ -86,41 +68,28 @@ export function SmartReminderInfo() {
     );
   }
 
-  const cardDescriptionText = inAppRemindersActive
-    ? "Hourly in-app hydration reminders are currently active!"
-    : "Enable hourly in-app notifications to remind you to drink water.";
+  const cardDescriptionText = "Hourly in-app hydration reminders are active!";
   
-  const contentText = inAppRemindersActive
-    ? "You are set to receive an in-app notification every hour to remind you to drink water, as long as this page is open and active in your browser."
-    : "To stay on top of your hydration, you can enable in-app reminders. You'll get a notification within this app each hour as long as this page is open and active.";
+  const contentText = "To help you stay on top of your hydration, you'll receive an in-app notification every hour. These reminders only work when HydrateWise is open and active on your device.";
 
   return (
     <Card className="shadow-lg w-full bg-secondary/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          {inAppRemindersActive ? <BellRing className="h-6 w-6 text-primary" /> : <BellOff className="h-6 w-6 text-muted-foreground" />}
+          <BellRing className="h-6 w-6 text-primary" />
            Smart In-App Reminders
         </CardTitle>
         <CardDescription>
-          {cardDescriptionText} These reminders only work when this page is open and active in your browser.
+          {cardDescriptionText}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
           {contentText}
         </p>
-        <Button onClick={handleToggleReminders} className="w-full sm:w-auto">
-          {inAppRemindersActive ? (
-            <>
-              <BellOff className="mr-2 h-4 w-4" /> Disable In-App Reminders
-            </>
-          ) : (
-            <>
-              <BellRing className="mr-2 h-4 w-4" /> Enable Hourly In-App Reminders
-            </>
-          )}
-        </Button>
+        {/* Button to toggle reminders has been removed */}
       </CardContent>
     </Card>
   );
 }
+
