@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ThemeToggleButton } from './theme-toggle-button';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -13,15 +14,16 @@ export function AppHeader() {
     return cn(
       "text-base font-medium transition-all duration-150 ease-in-out px-4 py-2 rounded-md",
       isActive 
-        ? "text-primary font-semibold bg-primary/10 border-b-2 border-primary" // Active link style with bottom border
-        : "text-muted-foreground hover:text-primary hover:bg-accent/30" // Inactive link hover style
+        ? "text-primary font-semibold bg-primary/10 border-b-2 border-primary"
+        : "text-muted-foreground hover:text-primary hover:bg-accent/30"
     );
   };
 
   return (
-    <header className="py-4 px-2 sm:px-4 border-b shadow-sm bg-card sticky top-0 z-50">
-      <div className="flex items-center justify-center"> {/* This centers the nav block */}
-        <nav className="flex items-center gap-6 sm:gap-8"> {/* Increased gap */}
+    <header className="py-3 px-2 sm:px-4 border-b shadow-sm bg-card sticky top-0 z-50">
+      {/* Increased max-width for more space and adjusted padding on header py-3 */}
+      <div className="relative flex items-center justify-center max-w-7xl mx-auto px-2"> {/* Added px-2 here for small internal padding */}
+        <nav className="flex items-center gap-6 sm:gap-8">
           <Link href="/" className={getLinkClasses('/')}>
             Dashboard
           </Link>
@@ -32,6 +34,9 @@ export function AppHeader() {
             Achievements
           </Link>
         </nav>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <ThemeToggleButton />
+        </div>
       </div>
     </header>
   );
