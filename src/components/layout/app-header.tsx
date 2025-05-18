@@ -21,8 +21,14 @@ export function AppHeader() {
 
   return (
     <header className="py-3 px-2 sm:px-4 border-b shadow-sm bg-card sticky top-0 z-50">
-      {/* Increased max-width for more space and adjusted padding on header py-3 */}
-      <div className="relative flex items-center justify-center max-w-7xl mx-auto px-2"> {/* Added px-2 here for small internal padding */}
+      {/* This div ensures the content is constrained by max-width and centered, with some internal padding. */}
+      <div className="flex items-center max-w-7xl mx-auto px-2">
+        {/* Left spacer: Pushes the nav towards the center. Can be used for a logo in the future. */}
+        <div className="flex-1">
+          {/* Intentionally empty for now to balance the theme toggle button on the right. */}
+          {/* For perfect balance, if a logo or other item is here, its width would be considered. */}
+        </div>
+
         <nav className="flex items-center gap-6 sm:gap-8">
           <Link href="/" className={getLinkClasses('/')}>
             Dashboard
@@ -34,7 +40,10 @@ export function AppHeader() {
             Achievements
           </Link>
         </nav>
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+
+        {/* Right spacer and container for actions like the theme toggle button. */}
+        {/* flex-1 allows it to take up space, justify-end pushes its content (theme toggle) to the right. */}
+        <div className="flex-1 flex justify-end items-center">
           <ThemeToggleButton />
         </div>
       </div>
