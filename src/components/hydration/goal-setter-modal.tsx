@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -27,6 +28,15 @@ interface GoalSetterModalProps {
   onSetGoal: (goal: number) => void;
 }
 
+const formatVolume = (ml: number): string => {
+  if (ml >= 1000) {
+    const liters = (ml / 1000).toFixed(1);
+    const formattedLiters = liters.endsWith('.0') ? liters.substring(0, liters.length - 2) : liters;
+    return `${ml}ml (${formattedLiters}L)`;
+  }
+  return `${ml}ml`;
+};
+
 export function GoalSetterModal({ isOpen, onClose, currentGoal, onSetGoal }: GoalSetterModalProps) {
   const { toast } = useToast();
   const form = useForm<GoalFormValues>({
@@ -46,7 +56,7 @@ export function GoalSetterModal({ isOpen, onClose, currentGoal, onSetGoal }: Goa
     onSetGoal(data.goal);
     toast({
       title: "Goal Updated!",
-      description: `Your new daily hydration goal is ${data.goal}ml.`,
+      description: `Your new daily hydration goal is ${formatVolume(data.goal)}.`,
     });
     onClose();
   }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -12,6 +13,15 @@ interface HydrationTrackerProps {
   onOpenGoalModal: () => void;
   isInitialized: boolean;
 }
+
+const formatVolume = (ml: number): string => {
+  if (ml >= 1000) {
+    const liters = (ml / 1000).toFixed(1);
+    const formattedLiters = liters.endsWith('.0') ? liters.substring(0, liters.length - 2) : liters;
+    return `${ml}ml (${formattedLiters}L)`;
+  }
+  return `${ml}ml`;
+};
 
 export function HydrationTracker({ currentIntake, dailyGoal, onOpenGoalModal, isInitialized }: HydrationTrackerProps) {
   if (!isInitialized) {
@@ -33,7 +43,7 @@ export function HydrationTracker({ currentIntake, dailyGoal, onOpenGoalModal, is
         <div className="flex justify-between items-center">
           <CardTitle>Today's Hydration</CardTitle>
           <Button variant="outline" size="sm" onClick={onOpenGoalModal} aria-label="Set hydration goal">
-            <Target className="mr-2 h-4 w-4" /> Goal: {dailyGoal}ml
+            <Target className="mr-2 h-4 w-4" /> Goal: {formatVolume(dailyGoal)}
           </Button>
         </div>
       </CardHeader>

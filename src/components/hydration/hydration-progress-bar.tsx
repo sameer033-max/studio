@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -6,6 +7,15 @@ interface HydrationProgressBarProps {
   currentIntake: number;
   dailyGoal: number;
 }
+
+const formatVolume = (ml: number): string => {
+  if (ml >= 1000) {
+    const liters = (ml / 1000).toFixed(1);
+    const formattedLiters = liters.endsWith('.0') ? liters.substring(0, liters.length - 2) : liters;
+    return `${ml}ml (${formattedLiters}L)`;
+  }
+  return `${ml}ml`;
+};
 
 export function HydrationProgressBar({ currentIntake, dailyGoal }: HydrationProgressBarProps) {
   const percentage = dailyGoal > 0 ? Math.min((currentIntake / dailyGoal) * 100, 100) : 0;
@@ -29,7 +39,7 @@ export function HydrationProgressBar({ currentIntake, dailyGoal }: HydrationProg
         </div>
       </div>
       <p className="text-center text-sm text-muted-foreground mt-2">
-        {currentIntake}ml / {dailyGoal}ml
+        {formatVolume(currentIntake)} / {formatVolume(dailyGoal)}
       </p>
     </div>
   );

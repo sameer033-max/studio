@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GlassWater, Bot, PlusCircle, MinusCircle } from 'lucide-react';
+import { GlassWater, PlusCircle, MinusCircle } from 'lucide-react'; // Removed Bot import
 import { useToast } from "@/hooks/use-toast";
 
 const logWaterSchema = z.object({
@@ -32,6 +33,15 @@ const presets = [
   { label: "Bottle (500ml)", value: 500 },
   { label: "Large Bottle (750ml)", value: 750 },
 ];
+
+const formatVolume = (ml: number): string => {
+  if (ml >= 1000) {
+    const liters = (ml / 1000).toFixed(1);
+    const formattedLiters = liters.endsWith('.0') ? liters.substring(0, liters.length - 2) : liters;
+    return `${ml}ml (${formattedLiters}L)`;
+  }
+  return `${ml}ml`;
+};
 
 export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
   const { toast } = useToast();
@@ -57,7 +67,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
       onLogWater(amount);
       toast({
         title: "Water Logged!",
-        description: `${amount}ml added to your daily intake.`,
+        description: `${formatVolume(amount)} added to your daily intake.`,
       });
       form.reset();
       setIsCustom(false); // Reset to preset view
@@ -74,7 +84,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
     onLogWater(amount);
     toast({
       title: "Water Logged!",
-      description: `${amount}ml added to your daily intake.`,
+      description: `${formatVolume(amount)} added to your daily intake.`,
     });
   };
 
@@ -151,12 +161,21 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
               <PlusCircle className="mr-2 h-4 w-4" /> Add to Intake
             </Button>
              <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => {
-                const amountToRemove = isCustom && form.getValues().customAmount ? parseFloat(form.getValues().customAmount!) : (form.getValues().presetAmount ? parseFloat(form.getValues().presetAmount!) : 0);
+                const customVal = form.getValues().customAmount;
+                const presetVal = form.getValues().presetAmount;
+                let amountToRemove = 0;
+
+                if (isCustom && customVal) {
+                    amountToRemove = parseFloat(customVal);
+                } else if (!isCustom && presetVal) {
+                    amountToRemove = parseFloat(presetVal);
+                }
+                
                 if (amountToRemove > 0) {
-                    onLogWater(-amountToRemove);
+                    onLogWater(-amountToRemove); // Pass negative value to subtract
                     toast({
                         title: "Water Removed",
-                        description: `${amountToRemove}ml removed from your intake.`,
+                        description: `${formatVolume(amountToRemove)} removed from your intake.`,
                     });
                 } else {
                      toast({
@@ -166,7 +185,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                     });
                 }
              }}>
-              <MinusCircle className="mr-2 h-4 w-4" /> Remove Last Entry
+              <MinusCircle className="mr-2 h-4 w-4" /> Remove Amount
             </Button>
           </CardFooter>
         </form>
