@@ -10,7 +10,7 @@ export function SmartReminderInfo() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2"><BellRing className="h-6 w-6 text-primary" /> Smart Reminders</CardTitle>
         <CardDescription>
-          Currently, HydrateWise doesn't have an active, built-in notification system to remind you to drink water.
+          This section is a placeholder for future smart reminder features, such as AI-powered suggestions for when to drink.
         </CardDescription>
       </CardHeader>
       <CardContent>
