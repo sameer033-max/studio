@@ -1,10 +1,10 @@
 
 import Link from 'next/link';
-import { Droplets } from 'lucide-react';
+import { Droplets, Bot, BarChart, Trophy, Cog } from 'lucide-react';
 
 export function AppHeader() {
   return (
-    <header className="py-4 px-4 sm:px-6 shadow-md bg-card sticky top-0 z-50">
+    <header className="py-4 px-2 sm:px-4 shadow-md bg-card sticky top-0 z-50">
       {/* Removed 'container' and 'mx-auto' from the div below to make it full-width within header padding */}
       <div className="flex items-center justify-between">
         {/* Brand/Logo Area */}
