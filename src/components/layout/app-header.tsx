@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Droplets, Bot, BarChart, Trophy, Cog } from 'lucide-react';
+import { Droplets } from 'lucide-react';
 
 export function AppHeader() {
   return (
@@ -32,3 +32,4 @@ export function AppHeader() {
     </header>
   );
 }
+
