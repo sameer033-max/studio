@@ -9,14 +9,14 @@ export function AppHeader() {
       <div className="flex items-center justify-between">
         {/* Brand/Logo Area */}
         <Link href="/" className="flex items-center gap-2" aria-label="Go to HydrateWise Dashboard">
-          <Droplets className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
-          <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
+          <Droplets className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> {/* Adjusted size */}
+          <h1 className="text-lg sm:text-xl font-semibold text-foreground"> {/* Adjusted size */}
             HydrateWise
           </h1>
         </Link>
 
         {/* Navigation Area */}
-        <nav className="flex items-center gap-4 sm:gap-6">
+        <nav className="flex items-center gap-3 sm:gap-4"> {/* Adjusted gap */}
           <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
             Dashboard
           </Link>
