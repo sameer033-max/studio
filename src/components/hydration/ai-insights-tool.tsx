@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react'; // Added useMemo
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,6 +75,10 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
     }
   }
 
+  const activityLevelSelectValue = useMemo(() => (
+    <SelectValue placeholder="Select activity level" />
+  ), []);
+
   return (
     <Card className="shadow-lg w-full">
       <CardHeader>
@@ -94,7 +98,7 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select activity level" />
+                          {activityLevelSelectValue}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

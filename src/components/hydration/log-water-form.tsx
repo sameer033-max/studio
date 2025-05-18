@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react'; // Added useMemo
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GlassWater, PlusCircle, MinusCircle } from 'lucide-react'; // Removed Bot import
+import { GlassWater, PlusCircle, MinusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 const logWaterSchema = z.object({
@@ -88,6 +88,10 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
     });
   };
 
+  const presetAmountSelectValue = useMemo(() => (
+    <SelectValue placeholder="Select a preset amount" />
+  ), []);
+
   return (
     <Card className="shadow-lg w-full">
       <CardHeader>
@@ -117,7 +121,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                     }} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a preset amount" />
+                          {presetAmountSelectValue}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
