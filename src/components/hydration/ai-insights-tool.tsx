@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -29,7 +30,11 @@ const insightsSchema = z.object({
 
 type InsightsFormValues = z.infer<typeof insightsSchema>;
 
-export function AiInsightsTool() {
+interface AiInsightsToolProps {
+  onInsightGenerated: () => void; // Callback to notify parent about AI usage
+}
+
+export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [insights, setInsights] = useState<PersonalizedHydrationInsightsOutput | null>(null);
@@ -56,6 +61,7 @@ export function AiInsightsTool() {
         title: "Insights Generated!",
         description: "Your personalized hydration tips are ready.",
       });
+      onInsightGenerated(); // Notify parent that AI was used
     } catch (e) {
       console.error("Error fetching AI insights:", e);
       setError("Failed to generate insights. Please try again.");

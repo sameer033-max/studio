@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -7,11 +8,24 @@ import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
 import { AiInsightsTool } from '@/components/hydration/ai-insights-tool';
 import { SmartReminderInfo } from '@/components/hydration/smart-reminder-info';
+import { AchievementsCard } from '@/components/hydration/achievements-card'; // Import new component
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton'; // For loading state
 
 export default function HydrateWisePage() {
-  const { dailyGoal, currentIntake, logWater, setDailyGoal, isInitialized } = useHydrationData(2500);
+  const { 
+    dailyGoal, 
+    currentIntake, 
+    logWater, 
+    setDailyGoal, 
+    isInitialized,
+    achievementStats, // Get achievement data
+    unlockedAchievements, // Get unlocked achievement IDs
+    incrementAiInsightsUsedCount, // Function to increment AI usage
+    allAchievements // All defined achievements
+  } = useHydrationData(2500);
+  
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
   return (
@@ -26,17 +40,27 @@ export default function HydrateWisePage() {
             isInitialized={isInitialized}
           />
 
-          {isInitialized && (
+          {isInitialized ? (
             <>
               <LogWaterForm onLogWater={logWater} />
-              <AiInsightsTool />
+              <AiInsightsTool onInsightGenerated={incrementAiInsightsUsedCount} />
+              <AchievementsCard 
+                allAchievements={allAchievements} 
+                unlockedAchievementIds={unlockedAchievements}
+                achievementStats={achievementStats}
+                dailyGoal={dailyGoal}
+              />
               <SmartReminderInfo />
             </>
-          )}
-
-          {!isInitialized && (
-            <div className="text-center py-10 text-muted-foreground">
-              Initializing HydrateWise...
+          ) : (
+            <div className="space-y-6">
+              <Skeleton className="h-60 w-full rounded-lg" />
+              <Skeleton className="h-48 w-full rounded-lg" />
+              <Skeleton className="h-72 w-full rounded-lg" />
+              <Skeleton className="h-32 w-full rounded-lg" />
+              <div className="text-center py-10 text-muted-foreground">
+                Initializing HydrateWise...
+              </div>
             </div>
           )}
         </main>
