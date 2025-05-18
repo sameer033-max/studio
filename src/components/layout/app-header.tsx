@@ -23,8 +23,8 @@ export function AppHeader() {
       <div className="flex items-center justify-between">
         {/* Brand/Logo Area */}
         <Link href="/" className="flex items-center gap-2" aria-label="Go to HydrateWise Dashboard">
-          <Droplets className="h-7 w-7 text-primary" /> {/* Adjusted size */}
-          <h1 className="text-xl font-semibold text-foreground"> {/* Adjusted size */}
+          <Droplets className="h-6 w-6 text-primary" /> {/* Adjusted size */}
+          <h1 className="text-lg font-semibold text-foreground"> {/* Adjusted size */}
             HydrateWise
           </h1>
         </Link>
