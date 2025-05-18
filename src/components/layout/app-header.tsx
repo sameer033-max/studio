@@ -20,7 +20,7 @@ export function AppHeader() {
 
   return (
     <header className="py-4 px-2 sm:px-4 shadow-md bg-card sticky top-0 z-50">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-center"> {/* Changed justify-end to justify-center */}
         <nav className="flex items-center gap-4 sm:gap-6">
           <Link href="/" className={getLinkClasses('/')}>
             Dashboard
