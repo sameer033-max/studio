@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react'; // Added useMemo
+import React, { useState, useMemo, useCallback } from 'react'; // Added useCallback
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -92,6 +92,12 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
     <SelectValue placeholder="Select a preset amount" />
   ), []);
 
+  // Memoize the onValueChange handler
+  const handlePresetAmountChange = useCallback((value: string, fieldOnChange: (value: string) => void) => {
+    fieldOnChange(value);
+    setIsCustom(false);
+  }, [setIsCustom]); // setIsCustom is stable
+
   return (
     <Card className="shadow-lg w-full">
       <CardHeader>
@@ -115,10 +121,10 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Choose a preset</FormLabel>
-                    <Select onValueChange={(value) => {
-                      field.onChange(value);
-                      setIsCustom(false);
-                    }} value={field.value}>
+                    <Select 
+                      onValueChange={(value) => handlePresetAmountChange(value, field.onChange)} 
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           {presetAmountSelectValue}
