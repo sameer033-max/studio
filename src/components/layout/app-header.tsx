@@ -11,7 +11,7 @@ export function AppHeader() {
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
     return cn(
-      "text-sm font-medium transition-all duration-150 ease-in-out px-3 py-2 rounded-md", // Added padding and rounded for hover effect
+      "text-base font-medium transition-all duration-150 ease-in-out px-4 py-2 rounded-md", // Increased font size and padding
       isActive 
         ? "text-primary font-semibold bg-primary/10" // Active link style
         : "text-muted-foreground hover:text-primary hover:bg-accent/30" // Inactive link hover style
@@ -20,8 +20,8 @@ export function AppHeader() {
 
   return (
     <header className="py-4 px-2 sm:px-4 shadow-md bg-card sticky top-0 z-50">
-      <div className="flex items-center justify-center"> {/* Changed justify-end to justify-center */}
-        <nav className="flex items-center gap-4 sm:gap-6">
+      <div className="flex items-center justify-center"> {/* This centers the nav block */}
+        <nav className="flex items-center gap-6 sm:gap-8"> {/* Increased gap */}
           <Link href="/" className={getLinkClasses('/')}>
             Dashboard
           </Link>
