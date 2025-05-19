@@ -2,9 +2,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { AppHeader } from '@/components/layout/app-header';
-import { AppFooter } from '@/components/layout/app-footer'; // Added AppFooter
+import { AppFooter } from '@/components/layout/app-footer'; 
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
 import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
@@ -12,8 +11,18 @@ import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bot, ArrowRight, Trophy } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { RotateCcw } from 'lucide-react';
 
 
 export default function HydrateWisePage() {
@@ -22,10 +31,13 @@ export default function HydrateWisePage() {
     currentIntake, 
     logWater, 
     setDailyGoal, 
+    resetIntake, // Get the new resetIntake function
     isInitialized,
   } = useHydrationData(2500);
   
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -42,13 +54,43 @@ export default function HydrateWisePage() {
           {isInitialized ? (
             <>
               <LogWaterForm onLogWater={logWater} />
-              {/* AI Insights and Achievements Link Cards removed as per previous requests */}
+              <div className="pt-4">
+                <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                      Reset Today's Intake
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will reset your current water intake for today to 0ml. 
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          resetIntake();
+                          setIsResetDialogOpen(false); // Close dialog after action
+                        }}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Confirm Reset
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
-              {/* Skeletons for AI Insights and Achievements Link Cards removed */}
+              <Skeleton className="h-9 w-full sm:w-48 rounded-md" /> {/* Reset Button Skeleton */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
@@ -66,7 +108,8 @@ export default function HydrateWisePage() {
           setIsGoalModalOpen(false);
         }}
       />
-      <AppFooter /> {/* Replaced inline footer */}
+      <AppFooter /> 
     </div>
   );
 }
+

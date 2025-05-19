@@ -86,7 +86,6 @@ export function useHydrationData(defaultGoal: number = 2000) {
       localStorage.setItem(UNLOCKED_ACHIEVEMENTS_KEY, JSON.stringify(Array.from(unlocked)));
     }
     // Update count for meta-achievements
-    // Ensure achievementStats is available before spreading
     setAchievementStatsInternal(prevStats => {
         const newStats = {...prevStats, unlockedAchievementsCount: unlocked.size };
         if (typeof window !== 'undefined') {
@@ -179,7 +178,6 @@ export function useHydrationData(defaultGoal: number = 2000) {
       if (newlyUnlocked.some(id => id === 'ALL_STAR_COLLECTOR' && !currentUnlockedIds.has('ALL_STAR_COLLECTOR'))) {
          setAndStoreUnlockedAchievements(new Set([...updatedUnlockedSet]));
       }
-
 
       newlyUnlocked.forEach(id => {
         const achievementDetails = ALL_ACHIEVEMENTS.find(a => a.id === id);
@@ -282,7 +280,7 @@ export function useHydrationData(defaultGoal: number = 2000) {
     }
     setAchievementStatsInternal(currentStats => {
         checkAndUnlockAchievements(currentStats, newGoal, unlockedAchievements);
-        return currentStats; // No direct change to stats here, but checkAndUnlock might update them
+        return currentStats; 
     });
   }, [unlockedAchievements, checkAndUnlockAchievements]);
   
@@ -292,7 +290,19 @@ export function useHydrationData(defaultGoal: number = 2000) {
       localStorage.setItem(INTAKE_KEY, '0');
       localStorage.setItem(LAST_LOG_DATE_KEY, getTodayISO());
     }
-  }, []);
+    // Optionally, you might want to re-evaluate achievements if resetting intake affects goal met status for the day
+    // For now, we assume achievements are based on positive progress.
+    // If a goal was met, then reset, the 'goalsMetCount' for that day is still counted unless specifically reverted.
+    // The current logic doesn't revert goalsMetCount on manual reset.
+    toast({
+      title: "Intake Reset",
+      description: "Your water intake for today has been reset to 0ml.",
+    });
+    // Re-check achievements in case this reset impacts any.
+    // For example, if there was an achievement for *not* having 0 intake. (Not currently implemented)
+    checkAndUnlockAchievements(achievementStats, dailyGoal, unlockedAchievements);
+
+  }, [toast, achievementStats, dailyGoal, unlockedAchievements, checkAndUnlockAchievements]);
 
   const incrementAiInsightsUsedCount = useCallback(() => {
     setAchievementStatsInternal(prevStats => {
