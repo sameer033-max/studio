@@ -20,6 +20,7 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
       // Check if an ad is already there (e.g. iframe or filled ins) to prevent multiple pushes
       if (adContainerRef.current.querySelector('iframe, ins.adsbygoogle[data-ad-status="filled"]')) {
         adLoadedRef.current = true;
+        console.log('AdMobBanner: Ad already detected in container.');
         return;
       }
       
@@ -27,31 +28,26 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
 
       const ins = document.createElement('ins');
       ins.className = 'adsbygoogle';
-      ins.style.display = 'block'; // AdSense ads are typically block-level
+      ins.style.display = 'block';
+      ins.style.width = '100%'; // Explicitly set width for the ad slot
+      // ins.style.height = 'auto'; // AdSense will determine height for format=auto
       ins.setAttribute('data-ad-client', publisherId);
       ins.setAttribute('data-ad-slot', adUnitId.split('/')[1]); // Extract slot ID
       ins.setAttribute('data-ad-format', 'auto'); // For responsive ads
 
       adContainerRef.current.appendChild(ins);
 
-      // Defer the push call to ensure the container has dimensions
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          try {
-            if (document.body.contains(ins) && adContainerRef.current) {
-              console.log('AdMobBanner: Container offsetWidth before push:', adContainerRef.current.offsetWidth);
-              ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-              adLoadedRef.current = true; 
-            } else {
-              console.warn("AdMobBanner: AdSense <ins> element was detached or container ref missing before ad push call.");
-            }
-          } catch (e) {
-            console.error('AdMobBanner: adsbygoogle.push() error (rAF deferred):', e);
-          }
-        });
-      }, 50); 
+      // Push the ad request
+      // This runs after the component is mounted and the script is loaded.
+      if (document.body.contains(ins) && adContainerRef.current) {
+        console.log('AdMobBanner: Container offsetWidth before push:', adContainerRef.current.offsetWidth);
+        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        adLoadedRef.current = true; 
+      } else {
+        console.warn("AdMobBanner: AdSense <ins> element was detached or container ref missing before ad push call.");
+      }
     } catch (e) {
-      console.error('AdMobBanner: Error preparing AdMob ad:', e);
+      console.error('AdMobBanner: Error preparing/pushing AdMob ad:', e);
     }
   }, [adUnitId, publisherId]);
 
@@ -92,19 +88,19 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
       };
       document.head.appendChild(script);
     }
-  }, [adUnitId, publisherId, loadAd]);
+  }, [adUnitId, publisherId, loadAd]); // loadAd is now a dependency
 
   return (
     <div 
       ref={adContainerRef} 
-      className="admob-banner-container w-full my-4 min-h-[50px] bg-muted/20 border border-dashed rounded-md"
+      className="admob-banner-container w-full my-4 min-h-[50px]" // Simplified styling
       aria-label="Advertisement"
     >
       {/* Ad content will be injected here by Google's script */}
+      {/* Optional: Add a visible placeholder style if ads don't load */}
+      {/* <div className="w-full h-[50px] bg-muted/10 flex items-center justify-center text-muted-foreground text-xs">Ad placeholder</div> */}
     </div>
   );
 };
 
 export default AdMobBanner;
-
-    
