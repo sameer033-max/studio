@@ -40,7 +40,7 @@ export default function HydrateWisePage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
-  // AdMob IDs from user
+  // AdMob IDs
   const adMobPublisherId = "ca-app-pub-5300461336032028"; 
   const adMobBannerAdUnitId = "ca-app-pub-5300461336032028/8334237238";
   const adMobNativeAdvancedAdUnitId = "ca-app-pub-5300461336032028/1108443787";
@@ -93,20 +93,18 @@ export default function HydrateWisePage() {
                 </AlertDialog>
               </div>
 
-              {/* AdMob Banner Placeholder */}
+              {/* AdMob Banner */}
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-2 text-muted-foreground">Advertisement</h3>
-                {/* Using Banner Ad Unit ID: ca-app-pub-5300461336032028/8334237238 */}
                 <AdMobBanner 
                   publisherId={adMobPublisherId}
                   adUnitId={adMobBannerAdUnitId} 
                 />
               </div>
 
-              {/* AdMob Native Advanced Placeholder */}
+              {/* AdMob Native Advanced */}
               <div className="mt-8">
                  <h3 className="text-lg font-semibold mb-2 text-muted-foreground">Sponsored Content</h3>
-                 {/* Using Native Advanced Ad Unit ID: ca-app-pub-5300461336032028/1108443787 */}
                 <AdMobNativeAdvanced
                   publisherId={adMobPublisherId}
                   adUnitId={adMobNativeAdvancedAdUnitId}
