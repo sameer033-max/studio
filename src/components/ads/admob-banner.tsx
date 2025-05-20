@@ -31,8 +31,8 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
       ins.setAttribute('data-ad-client', publisherId);
       ins.setAttribute('data-ad-slot', adUnitId.split('/')[1]); // Extract slot ID
       ins.setAttribute('data-ad-format', 'auto');
-      ins.setAttribute('data-full-width-responsive', 'true');
-      
+      // ins.setAttribute('data-full-width-responsive', 'true'); // Removed this line
+
       adContainerRef.current.appendChild(ins);
 
       // Defer the push call to ensure the container has dimensions
