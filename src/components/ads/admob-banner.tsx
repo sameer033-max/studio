@@ -51,17 +51,19 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
 
           // Defer the push call to ensure the container has dimensions
           setTimeout(() => {
-            try {
-              // Ensure ins element is still part of the DOM
-              if (document.body.contains(ins)) {
-                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-                adLoadedRef.current = true; 
-              } else {
-                console.warn("AdSense <ins> element was detached before ad push call.");
+            requestAnimationFrame(() => { // Wrap in requestAnimationFrame
+              try {
+                // Ensure ins element is still part of the DOM
+                if (document.body.contains(ins) && adContainerRef.current) {
+                  ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+                  adLoadedRef.current = true; 
+                } else {
+                  console.warn("AdSense <ins> element was detached or container ref missing before ad push call.");
+                }
+              } catch (e) {
+                console.error('adsbygoogle.push() error (rAF deferred):', e);
               }
-            } catch (e) {
-              console.error('adsbygoogle.push() error (deferred):', e);
-            }
+            });
           }, 0); 
         }
       } catch (e) {
@@ -76,7 +78,7 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
       script.onerror = () => {
         console.error("Adsense script failed to load.");
       };
-    } else if (script.readyState === 'loaded' || script.readyState === 'complete') {
+    } else if (script.readyState === 'loaded' || script.readyState === 'complete') { // For IE, or if script was loaded by other means
       loadAd();
     }
 
