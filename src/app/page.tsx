@@ -23,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { RotateCcw } from 'lucide-react';
+import AdMobBanner from '@/components/ads/admob-banner';
 
 
 export default function HydrateWisePage() {
@@ -31,12 +32,16 @@ export default function HydrateWisePage() {
     currentIntake, 
     logWater, 
     setDailyGoal, 
-    resetIntake, // Get the new resetIntake function
+    resetIntake,
     isInitialized,
   } = useHydrationData(2500);
   
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
+  // AdMob IDs from user - ensure these are correctly formatted for web if needed
+  const adMobPublisherId = "ca-app-pub-5300461336032028"; // This is the publisher ID part
+  const adMobAdUnitId = "ca-app-pub-5300461336032028/8334237238";
 
 
   return (
@@ -75,7 +80,7 @@ export default function HydrateWisePage() {
                       <AlertDialogAction
                         onClick={() => {
                           resetIntake();
-                          setIsResetDialogOpen(false); // Close dialog after action
+                          setIsResetDialogOpen(false);
                         }}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
@@ -85,12 +90,22 @@ export default function HydrateWisePage() {
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
+
+              {/* AdMob Banner Placeholder */}
+              <div className="mt-8">
+                <AdMobBanner 
+                  publisherId={adMobPublisherId}
+                  adUnitId={adMobAdUnitId} 
+                />
+              </div>
+              
             </>
           ) : (
             <div className="space-y-6">
               <Skeleton className="h-60 w-full rounded-lg" /> {/* HydrationTracker */}
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
               <Skeleton className="h-9 w-full sm:w-48 rounded-md" /> {/* Reset Button Skeleton */}
+              <Skeleton className="h-16 w-full rounded-md mt-8" /> {/* Ad Banner Skeleton */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
