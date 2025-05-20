@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { RotateCcw } from 'lucide-react';
 import AdMobBanner from '@/components/ads/admob-banner';
+import AdMobNativeAdvanced from '@/components/ads/admob-native-advanced';
 
 
 export default function HydrateWisePage() {
@@ -39,9 +40,10 @@ export default function HydrateWisePage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
-  // AdMob IDs from user - ensure these are correctly formatted for web if needed
-  const adMobPublisherId = "ca-app-pub-5300461336032028"; // This is the publisher ID part
-  const adMobAdUnitId = "ca-app-pub-5300461336032028/8334237238";
+  // AdMob IDs from user
+  const adMobPublisherId = "ca-app-pub-5300461336032028"; 
+  const adMobBannerAdUnitId = "ca-app-pub-5300461336032028/8334237238";
+  const adMobNativeAdvancedAdUnitId = "ca-app-pub-5300461336032028/1108443787";
 
 
   return (
@@ -93,9 +95,19 @@ export default function HydrateWisePage() {
 
               {/* AdMob Banner Placeholder */}
               <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-2 text-muted-foreground">Advertisement</h3>
                 <AdMobBanner 
                   publisherId={adMobPublisherId}
-                  adUnitId={adMobAdUnitId} 
+                  adUnitId={adMobBannerAdUnitId} 
+                />
+              </div>
+
+              {/* AdMob Native Advanced Placeholder */}
+              <div className="mt-8">
+                 <h3 className="text-lg font-semibold mb-2 text-muted-foreground">Sponsored Content</h3>
+                <AdMobNativeAdvanced
+                  publisherId={adMobPublisherId}
+                  adUnitId={adMobNativeAdvancedAdUnitId}
                 />
               </div>
               
@@ -106,6 +118,7 @@ export default function HydrateWisePage() {
               <Skeleton className="h-48 w-full rounded-lg" /> {/* LogWaterForm */}
               <Skeleton className="h-9 w-full sm:w-48 rounded-md" /> {/* Reset Button Skeleton */}
               <Skeleton className="h-16 w-full rounded-md mt-8" /> {/* Ad Banner Skeleton */}
+              <Skeleton className="h-32 w-full rounded-md mt-8" /> {/* Native Ad Skeleton */}
               <div className="text-center py-10 text-muted-foreground">
                 Initializing HydrateWise...
               </div>
@@ -127,4 +140,3 @@ export default function HydrateWisePage() {
     </div>
   );
 }
-
