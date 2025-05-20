@@ -1,4 +1,4 @@
-// The directive tells the JavaScript engine that this code should be executed in 'strict' mode.
+// src/ai/flows/personalized-hydration-insights.ts
 'use server';
 
 /**
@@ -26,6 +26,14 @@ export type PersonalizedHydrationInsightsInput = z.infer<
   typeof PersonalizedHydrationInsightsInputSchema
 >;
 
+// This is the schema for the LLM's direct output
+const LLMHydrationMessageSchema = z.object({
+  hydrationMessage: z
+    .string()
+    .describe('A personalized hydration recommendation message for the user, no more than 100 words.'),
+});
+
+// This is the final output schema for the entire flow
 const PersonalizedHydrationInsightsOutputSchema = z.object({
   hydrationMessage: z
     .string()
@@ -42,23 +50,23 @@ export async function getPersonalizedHydrationInsights(
   return personalizedHydrationInsightsFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'personalizedHydrationInsightsPrompt',
+// This prompt asks the LLM only for the hydration message
+const hydrationMessagePrompt = ai.definePrompt({
+  name: 'hydrationMessagePrompt',
   input: {schema: PersonalizedHydrationInsightsInputSchema},
-  output: {schema: PersonalizedHydrationInsightsOutputSchema},
+  output: {schema: LLMHydrationMessageSchema},
   prompt: `You are an AI assistant designed to provide personalized hydration advice.
 
   Based on the user's activity level, weather conditions, sleep duration, and weight,
-  recommend optimal water intake and provide a motivating message.
+  provide a motivating hydration message.
 
   Activity Level: {{{activityLevel}}}
   Weather: {{{weather}}}
   Sleep Duration: {{{sleepDuration}}} hours
   Weight: {{{weight}}} kg
 
-  Respond with a message that is no more than 100 words. Also provide suggestedIntakeOz based on all parameters, using this formula: (weight * 0.67) + (activityLevel == "active" ? 20 : 0) + (weather == "hot" ? 15 : 0) + (sleepDuration < 6 ? 10 : 0)
-  Ensure that the hydrationMessage is tailored to these values.
-  `,
+  Ensure that the hydrationMessage is tailored to these values and is no more than 100 words.
+  Respond with a JSON object containing only the "hydrationMessage" key.`,
 });
 
 const personalizedHydrationInsightsFlow = ai.defineFlow(
@@ -67,8 +75,38 @@ const personalizedHydrationInsightsFlow = ai.defineFlow(
     inputSchema: PersonalizedHydrationInsightsInputSchema,
     outputSchema: PersonalizedHydrationInsightsOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input: PersonalizedHydrationInsightsInput): Promise<PersonalizedHydrationInsightsOutput> => {
+    // Get the hydration message from the LLM
+    const { output: llmOutput } = await hydrationMessagePrompt(input);
+
+    if (!llmOutput?.hydrationMessage) {
+      console.error('LLM did not return a valid hydrationMessage. Output:', llmOutput);
+      throw new Error('The AI failed to generate a hydration message. Please try again.');
+    }
+
+    // Calculate suggestedIntakeOz in TypeScript
+    // Formula: (weight_kg * 2.20462 * 0.5) oz is a common base, then adjust.
+    // A simpler approach for oz: (weight_kg * 0.67) from original prompt seems to be oz directly for base.
+    // (weight * 0.67) + (activityLevel == "active" ? 20 : 0) + (weather == "hot" ? 15 : 0) + (sleepDuration < 6 ? 10 : 0)
+    
+    let suggestedIntakeOz = input.weight * 0.67; // Base intake in oz
+
+    if (input.activityLevel.toLowerCase() === "active") {
+      suggestedIntakeOz += 20;
+    }
+
+    const weatherDescription = input.weather.toLowerCase();
+    if (weatherDescription.includes("hot") || weatherDescription.includes("warm") || weatherDescription.includes("sunny") || weatherDescription.includes("humid")) {
+      suggestedIntakeOz += 15;
+    }
+
+    if (input.sleepDuration < 6) {
+      suggestedIntakeOz += 10;
+    }
+
+    return {
+      hydrationMessage: llmOutput.hydrationMessage,
+      suggestedIntakeOz: Math.round(suggestedIntakeOz),
+    };
   }
 );
