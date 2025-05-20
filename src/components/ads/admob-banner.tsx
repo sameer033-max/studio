@@ -31,6 +31,12 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
     const loadAd = () => {
       try {
         if (adContainerRef.current) {
+          // Check if an ad is already there (e.g. iframe or filled ins) to prevent multiple pushes
+          if (adContainerRef.current.querySelector('iframe, ins.adsbygoogle[data-ad-status="filled"]')) {
+            adLoadedRef.current = true; 
+            return;
+          }
+          
           adContainerRef.current.innerHTML = ''; // Clear previous ad if any
 
           const ins = document.createElement('ins');
@@ -43,31 +49,43 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
           
           adContainerRef.current.appendChild(ins);
 
-          // Initialize the ad slot
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-          adLoadedRef.current = true;
+          // Defer the push call to ensure the container has dimensions
+          setTimeout(() => {
+            try {
+              // Ensure ins element is still part of the DOM
+              if (document.body.contains(ins)) {
+                ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+                adLoadedRef.current = true; 
+              } else {
+                console.warn("AdSense <ins> element was detached before ad push call.");
+              }
+            } catch (e) {
+              console.error('adsbygoogle.push() error (deferred):', e);
+            }
+          }, 0); 
         }
       } catch (e) {
-        console.error('Error loading AdMob ad:', e);
+        console.error('Error preparing AdMob ad:', e);
       }
     };
 
-    // If script is already loaded, load ad. Otherwise, wait for script to load.
-    if (script.onload === null) { // Check if onload has been set
+    if ((window as any).adsbygoogle) { 
+        loadAd();
+    } else if (script.onload === null) { 
       script.onload = loadAd;
-    } else if (document.readyState === 'complete' || (window as any).adsbygoogle) {
-      // If script was loaded by another instance or page is already complete
+      script.onerror = () => {
+        console.error("Adsense script failed to load.");
+      };
+    } else if (script.readyState === 'loaded' || script.readyState === 'complete') {
       loadAd();
     }
 
 
-    // Cleanup function to remove the ad element if component unmounts,
-    // though ads might persist if not handled carefully by adsbygoogle script.
     return () => {
       // Basic cleanup, actual ad removal might be more complex depending on Google's script
-      if (adContainerRef.current) {
-        // adContainerRef.current.innerHTML = '';
-      }
+      // if (adContainerRef.current) {
+      // adContainerRef.current.innerHTML = ''; 
+      // }
     };
   }, [adUnitId, publisherId]);
 
@@ -78,8 +96,6 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
       aria-label="Advertisement"
     >
       {/* Ad content will be injected here by Google's script */}
-      {/* Fallback content if ad doesn't load, though Google often handles this */}
-       {/* <p className="text-xs text-muted-foreground">Advertisement</p> */}
     </div>
   );
 };
