@@ -27,11 +27,10 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
 
       const ins = document.createElement('ins');
       ins.className = 'adsbygoogle';
-      ins.style.display = 'block';
+      ins.style.display = 'block'; // AdSense ads are typically block-level
       ins.setAttribute('data-ad-client', publisherId);
       ins.setAttribute('data-ad-slot', adUnitId.split('/')[1]); // Extract slot ID
-      ins.setAttribute('data-ad-format', 'auto');
-      // ins.setAttribute('data-full-width-responsive', 'true'); // Removed this line
+      ins.setAttribute('data-ad-format', 'auto'); // For responsive ads
 
       adContainerRef.current.appendChild(ins);
 
@@ -50,7 +49,7 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
             console.error('AdMobBanner: adsbygoogle.push() error (rAF deferred):', e);
           }
         });
-      }, 50); // Slightly increased delay 
+      }, 50); 
     } catch (e) {
       console.error('AdMobBanner: Error preparing AdMob ad:', e);
     }
@@ -65,7 +64,6 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
     let script = document.getElementById(SCRIPT_ID) as HTMLScriptElement;
 
     const scriptLoadHandler = () => {
-        // Ensure adsbygoogle is available before calling loadAd
         if ((window as any).adsbygoogle) {
           loadAd();
         } else {
@@ -73,20 +71,16 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
         }
     };
 
-    if (script) { // Script tag exists
-      if ((window as any).adsbygoogle) { // And library is loaded
+    if (script) { 
+      if ((window as any).adsbygoogle) { 
         loadAd();
-      } else if (!script.onload) { // Script tag exists, but library not loaded, and no onload attached yet
-        //This case means the script is in the DOM but hasn't finished loading.
-        //We attach our handler. If it loads, our handler runs.
+      } else if (!script.onload) { 
         script.onload = scriptLoadHandler;
         script.onerror = () => {
           console.error("AdMobBanner: Adsense script (already in DOM) failed to load.");
         };
       }
-      // If script.onload is already set, we assume it will eventually call loadAd or similar
-      // or it has already loaded and window.adsbygoogle would be set.
-    } else { // Script tag does not exist
+    } else { 
       script = document.createElement('script');
       script.id = SCRIPT_ID;
       script.async = true;
@@ -103,7 +97,7 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
   return (
     <div 
       ref={adContainerRef} 
-      className="admob-banner-container w-full my-4 flex justify-center items-center min-h-[50px] bg-muted/20 border border-dashed rounded-md"
+      className="admob-banner-container w-full my-4 min-h-[50px] bg-muted/20 border border-dashed rounded-md"
       aria-label="Advertisement"
     >
       {/* Ad content will be injected here by Google's script */}
@@ -112,3 +106,5 @@ const AdMobBanner: React.FC<AdMobBannerProps> = ({ adUnitId, publisherId }) => {
 };
 
 export default AdMobBanner;
+
+    
