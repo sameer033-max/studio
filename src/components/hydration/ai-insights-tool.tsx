@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react'; // Added useMemo
+import React, { useState, useMemo, useCallback } from 'react'; 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,7 +50,7 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
     },
   });
 
-  async function onSubmit(data: InsightsFormValues) {
+  const onSubmit = useCallback(async (data: InsightsFormValues) => {
     setIsLoading(true);
     setInsights(null);
     setError(null);
@@ -64,7 +64,8 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
       onInsightGenerated(); // Notify parent that AI was used
     } catch (e) {
       console.error("Error fetching AI insights:", e);
-      setError("Failed to generate insights. Please try again.");
+      const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
+      setError(`Failed to generate insights. ${errorMessage}`);
       toast({
         title: "Error",
         description: "Could not fetch AI insights.",
@@ -73,7 +74,7 @@ export function AiInsightsTool({ onInsightGenerated }: AiInsightsToolProps) {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [onInsightGenerated, toast]);
 
   const activityLevelSelectValue = useMemo(() => (
     <SelectValue placeholder="Select activity level" />
