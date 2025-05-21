@@ -8,14 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useFormContext } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GlassWater, PlusCircle, MinusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 const logWaterSchema = z.object({
   customAmount: z.string().refine(val => {
-    if (val === "") return true; // Allow empty string, onSubmit will handle it
+    if (val === "") return true; // Allow empty string, parseFloat handles it as NaN
     const num = parseFloat(val);
     return !isNaN(num) && num > 0;
   }, {
@@ -87,25 +87,30 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
     }
   }
   
-  const handlePresetQuickAdd = (amount: number) => {
+  const handlePresetQuickAdd = useCallback((amount: number) => {
     onLogWater(amount);
     toast({
       title: "Water Logged!",
       description: `${formatVolume(amount)} added to your daily intake.`,
     });
-  };
+  }, [onLogWater, toast]);
 
   const presetAmountSelectValue = useMemo(() => (
     <SelectValue placeholder="Select a preset amount" />
   ), []);
 
   const handlePresetAmountChange = useCallback((value: string, fieldOnChange: (value: string) => void) => {
-    fieldOnChange(value); // Update RHF for presetAmount
-    form.setValue('customAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false }); // Clear customAmount
-    if (isCustom) { // If current mode is custom, switch to preset
-      setIsCustom(false);
-    }
-  }, [form, isCustom, setIsCustom]);
+    fieldOnChange(value); 
+    form.setValue('customAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false }); 
+    setIsCustom(false);
+  }, [form, setIsCustom]);
+
+  const handleCustomAmountChange = useCallback((currentValue: string, fieldOnChange: (value: string) => void) => {
+    fieldOnChange(currentValue);
+    form.setValue('presetAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+    setIsCustom(true);
+  }, [form, setIsCustom]);
+
 
   return (
     <Card className="shadow-lg w-full">
@@ -160,15 +165,7 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
                     <FormLabel>Or enter custom amount (ml)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 300" {...field} 
-                        onChange={e => {
-                          const currentValue = e.target.value;
-                          field.onChange(currentValue); // Update RHF for customAmount
-                          // If user types anything in customAmount, assume they intend to use custom mode.
-                          form.setValue('presetAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false }); // Clear presetAmount
-                          if (!isCustom) { // If current mode is preset, switch to custom
-                            setIsCustom(true);
-                          }
-                        }}
+                        onChange={e => handleCustomAmountChange(e.target.value, field.onChange)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -179,10 +176,9 @@ export function LogWaterForm({ onLogWater }: LogWaterFormProps) {
             <Button type="button" variant="link" onClick={() => {
                 const newIsCustom = !isCustom;
                 setIsCustom(newIsCustom);
-                // When toggling, clear the field that will be hidden
-                if (newIsCustom) { // Switched TO custom
+                if (newIsCustom) { 
                     form.setValue('presetAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
-                } else { // Switched TO preset
+                } else { 
                     form.setValue('customAmount', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
                 }
             }} className="p-0 h-auto">

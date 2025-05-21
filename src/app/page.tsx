@@ -2,11 +2,12 @@
 "use client";
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { AppHeader } from '@/components/layout/app-header';
 import { AppFooter } from '@/components/layout/app-footer'; 
 import { HydrationTracker } from '@/components/hydration/hydration-tracker';
 import { LogWaterForm } from '@/components/hydration/log-water-form';
-import { GoalSetterModal } from '@/components/hydration/goal-setter-modal';
+// import { GoalSetterModal } from '@/components/hydration/goal-setter-modal'; // Original import
 import { useHydrationData } from '@/hooks/use-hydration-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,6 +25,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { RotateCcw } from 'lucide-react';
 
+const GoalSetterModal = dynamic(() => 
+  import('@/components/hydration/goal-setter-modal').then(mod => mod.GoalSetterModal), 
+  { 
+    ssr: false,
+    loading: () => <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"><Skeleton className="h-96 w-[425px] rounded-lg bg-card" /></div> 
+  }
+);
 
 export default function HydrateWisePage() {
   const { 
@@ -98,15 +106,17 @@ export default function HydrateWisePage() {
         </main>
       </ScrollArea>
       
-      <GoalSetterModal
-        isOpen={isGoalModalOpen}
-        onClose={() => setIsGoalModalOpen(false)}
-        currentGoal={dailyGoal}
-        onSetGoal={(newGoal) => {
-          setDailyGoal(newGoal);
-          setIsGoalModalOpen(false);
-        }}
-      />
+      {isGoalModalOpen && ( // Conditionally render modal to ensure dynamic import works
+        <GoalSetterModal
+          isOpen={isGoalModalOpen}
+          onClose={() => setIsGoalModalOpen(false)}
+          currentGoal={dailyGoal}
+          onSetGoal={(newGoal) => {
+            setDailyGoal(newGoal);
+            setIsGoalModalOpen(false);
+          }}
+        />
+      )}
       <AppFooter /> 
     </div>
   );
